@@ -10,6 +10,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;to activate the plugin:
+;   1) press the "plus" button at the top level, choose "alexinsert"
+;   2) in the insert menu the 2 additional buttons should appear
+
 (texmacs-module (alexinsert-alexinsert)
   (:use (utils plugins plugin-eval)))
 
@@ -21,10 +25,15 @@
 
 (tm-define (labello-insert t)
   (:require (tree-is-buffer? t))
-  (begin (insert '(label "tesi me hard"))(display*(string-append "text: "
-                                                    (format #f "~s" 
-                                                                   (tree-outer (focus-tree)))))(insert "some text"))
-  )
+  (begin 
+          (insert (format #f "~s"  (focus-tree)))
+          (insert '(label "tesi me hard"))
+          (insert "some text")))
+
+;TODO:
+;create unique label: 3 words or the first <
+;be able to get the list of all labels (HOW TO DO IT???)
 
 (tm-define (make-labello)
   (labello-insert (focus-tree)))
+
