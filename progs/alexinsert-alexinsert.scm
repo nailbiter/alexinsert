@@ -27,24 +27,35 @@
 
 (tm-define (labello-insert t)
   (:require (tree-is-buffer? t))
-  (begin 
-          (insert (list 'label (text->label(format #f "~s"  (focus-tree)))))
-            ;'(label "tesi me"));
-          (insert "some text")
+  (let((suggestion (text->label(format #f "~s"  (focus-tree)))))
+    (dialogue-window (form3 suggestion) (lambda (x) (insert (list 'label x) )) "Insert the label")
           ))
 
 ;TODO:
-;create unique label: 3 words or the first <
-    ;prompt
-    ;make sure it's unique (<-- we need reference list for that)
+    ;make sure label is unique (<-- we need reference list for that)
 
 ;INGRIDIENTS
-;(for label)how to make prompt
-;(for ref)make the menu (??: how to build the menu)
+;(for ref)make the menu (??: how to build the menu):    /Users/nailbiter/Downloads/TeXmacs-1.99.5-src//TeXmacs/doc/devel/scheme/gui/scheme-gui-dialogs.en.tm
 ;(for label/ref)be able to get the list of all labels (HOW TO DO IT???)
+
+;FIXME:
+    ;insert label at the beginning of the theorem?
 
 (tm-define (make-labello)
   (labello-insert (focus-tree)))
+
+(tm-widget ((form3 default) cmd)
+  (resize "500px" "500px"
+    (padded
+      (form "Test"
+        (aligned
+          (item (text "Label: ")
+            (form-input "label" "string" (list default) "1w"))
+          )
+        (bottom-buttons
+          ("Cancel" (noop)) >>
+          ("Ok"
+           (cmd (format #f "~a" (car (form-values))))))))))
 
 (define (text->label text) (let*(
                                 (match(string-match "<\\\\([^>]*)>" text))
@@ -59,8 +70,5 @@
                                 (body(filter(lambda(s)(not(or (string-null? s)(string=? s "\\;"))))body));FIXME: exmpirical
                                 (body(list-head body (min (length body)3)))
                                 (body (if(null? body)body(cons(car body)(map(lambda(s)(string-append "-" s))(cdr body)))))
-                                ) (format #f "~a:~a"  thmtype (string-concatenate body))))
-;;<tree <\proposition>
-;;  ooeuoeu
-;;</proposition>>??
-;thm:Let's-just-hope
+                                ) 
+                             (format #f "~a:~a"  thmtype (string-concatenate body))))
